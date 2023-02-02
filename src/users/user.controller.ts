@@ -51,7 +51,10 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDTO: CreateUserDTO): Promise<UserResponse> {
-    if (!createUserDTO.login || !createUserDTO.password) {
+    if (
+      typeof createUserDTO.login !== 'string' ||
+      typeof createUserDTO.password !== 'string'
+    ) { 
       throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
     }
 
