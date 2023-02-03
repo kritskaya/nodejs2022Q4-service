@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuid4 } from 'uuid';
-import { CreateAlbumDTO } from './dto/create-album.dto';
-import { UpdateAlbumDTO } from './dto/update-album.dto';
+import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
 import { Album } from './interfaces/album.interface';
 
 @Injectable()

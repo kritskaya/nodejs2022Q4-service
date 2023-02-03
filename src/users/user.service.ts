@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdatePasswordDTO } from './dto/update-password.dto';
+import { CreateUserDTO } from './dto/user.dto';
+import { UpdatePasswordDTO } from './dto/password.dto';
 import { User } from './interfaces/user.interface';
 
 @Injectable()

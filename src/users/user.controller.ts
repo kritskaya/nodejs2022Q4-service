@@ -9,10 +9,12 @@ import {
   Body,
   Delete,
   HttpCode,
+  ParseUUIDPipe,
+  ValidationPipe,
 } from '@nestjs/common';
 import { validate } from 'uuid';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdatePasswordDTO } from './dto/update-password.dto';
+import { CreateUserDTO } from './dto/user.dto';
+import { UpdatePasswordDTO } from './dto/password.dto';
 import { User } from './interfaces/user.interface';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
@@ -27,15 +29,17 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param() params): Promise<UserResponse> {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<UserResponse> {
+    // if (!validate(params.id)) {
+    //   throw new HttpException(
+    //     'Specified id is invalid',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    const user = await this.userService.findOne(params.id);
+    const user = await this.userService.findOne(id);
 
     if (!user) {
       throw new HttpException(
@@ -50,15 +54,15 @@ export class UserController {
   }
 
   @Post()
-  async create(@Body() createUserDTO: CreateUserDTO): Promise<UserResponse> {
-    if (
-      typeof createUserDTO.login !== 'string' ||
-      typeof createUserDTO.password !== 'string'
-    ) { 
-      throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    }
+  async create(@Body(ValidationPipe) dto: CreateUserDTO): Promise<UserResponse> {
+    // if (
+    //   typeof createUserDTO.login !== 'string' ||
+    //   typeof createUserDTO.password !== 'string'
+    // ) {
+    //   throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
+    // }
 
-    const newUser = this.userService.create(createUserDTO);
+    const newUser = this.userService.create(dto);
     const { password, ...userResponse } = newUser;
 
     return userResponse;
@@ -66,21 +70,21 @@ export class UserController {
 
   @Put(':id')
   async update(
-    @Param() params,
-    @Body() updatePasswordDTO: UpdatePasswordDTO,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(ValidationPipe) updatePasswordDTO: UpdatePasswordDTO,
   ): Promise<UserResponse> {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!validate(params.id)) {
+    //   throw new HttpException(
+    //     'Specified id is invalid',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    if (!updatePasswordDTO.oldPassword || !updatePasswordDTO.newPassword) {
-      throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    }
+    // if (!updatePasswordDTO.oldPassword || !updatePasswordDTO.newPassword) {
+    //   throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
+    // }
 
-    const user = this.userService.findOne(params.id);
+    const user = this.userService.findOne(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
@@ -104,12 +108,12 @@ export class UserController {
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() params) {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!validate(params.id)) {
+    //   throw new HttpException(
+    //     'Specified id is invalid',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
     const user = this.userService.findOne(params.id);
     if (!user) {

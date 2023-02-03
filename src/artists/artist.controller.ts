@@ -9,11 +9,11 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
+  ValidationPipe,
 } from '@nestjs/common';
-import { CreateArtistDTO } from 'src/artists/dto/create-artist.dto';
-import { validate } from 'uuid';
+import { CreateArtistDTO, UpdateArtistDTO } from 'src/artists/dto/artist.dto';
 import { ArtistService } from './artist.service';
-import { UpdateArtistDTO } from './dto/update-artist.dto';
 import { Artist } from './interfaces/artist.interface';
 
 @Controller('artist')
@@ -27,15 +27,8 @@ export class ArtistController {
   }
 
   @Get(':id')
-  async findOne(@Param() params): Promise<Artist> {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const artist = this.artistService.findOne(params.id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Artist> {
+    const artist = this.artistService.findOne(id);
     if (!artist) {
       throw new HttpException(
         'Artist with specified id is not found',
@@ -47,35 +40,19 @@ export class ArtistController {
   }
 
   @Post()
-  async create(@Body() createArtistDTO: CreateArtistDTO): Promise<Artist> {
-    if (
-      typeof createArtistDTO.name !== 'string' ||
-      typeof createArtistDTO.grammy !== 'boolean'
-    ) {
-      throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    }
-
+  async create(
+    @Body(ValidationPipe) createArtistDTO: CreateArtistDTO,
+  ): Promise<Artist> {
     const newArtist = this.artistService.create(createArtistDTO);
     return newArtist;
   }
 
   @Put(':id')
   async update(
-    @Param() params,
-    @Body() updateArtistDTO: UpdateArtistDTO,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(ValidationPipe) updateArtistDTO: UpdateArtistDTO,
   ): Promise<Artist> {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    if (typeof updateArtistDTO.grammy !== 'boolean') {
-      throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    }
-
-    const artist = this.artistService.findOne(params.id);
+    const artist = this.artistService.findOne(id);
     if (!artist) {
       throw new HttpException(
         'Artist with specified id is not found',
@@ -83,21 +60,14 @@ export class ArtistController {
       );
     }
 
-    const newArtist = this.artistService.update(params.id, updateArtistDTO);
+    const newArtist = this.artistService.update(id, updateArtistDTO);
     return newArtist;
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() params) {
-    if (!validate(params.id)) {
-      throw new HttpException(
-        'Specified id is invalid',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const artist = this.artistService.findOne(params.id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    const artist = this.artistService.findOne(id);
     if (!artist) {
       throw new HttpException(
         'Artist with specified id is not found',
@@ -105,7 +75,7 @@ export class ArtistController {
       );
     }
 
-    this.artistService.delete(params.id);
+    this.artistService.delete(id);
     return;
   }
 }
