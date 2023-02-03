@@ -12,13 +12,19 @@ import {
   ParseUUIDPipe,
   ValidationPipe,
 } from '@nestjs/common';
+import { AlbumService } from 'src/albums/album.service';
 import { CreateArtistDTO, UpdateArtistDTO } from 'src/artists/dto/artist.dto';
+import { TrackService } from 'src/tracks/track.service';
 import { ArtistService } from './artist.service';
 import { Artist } from './interfaces/artist.interface';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(
+    private readonly artistService: ArtistService,
+    private albumService: AlbumService,
+    private trackService: TrackService,
+  ) {}
 
   @Get()
   async findAll(): Promise<Artist[]> {
@@ -76,6 +82,21 @@ export class ArtistController {
     }
 
     this.artistService.delete(id);
+
+    const albums = this.albumService.findAll();
+    albums.forEach((album) => {
+      if (album.artistId === id) {
+        this.albumService.update(album.id, { artistId: null });
+      }
+    });
+
+
+    const tracks = this.trackService.findAll();
+    tracks.forEach((track) => {
+      if (track.artistId === id) {
+        this.trackService.update(track.id, { artistId: null });
+      }
+    });
     return;
   }
 }

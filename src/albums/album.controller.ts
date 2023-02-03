@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Body, Delete, HttpCode, Post, Put } from '@nestjs/common/decorators';
 import { ArtistService } from 'src/artists/artist.service';
+import { TrackService } from 'src/tracks/track.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
 import { Album } from './interfaces/album.interface';
@@ -18,6 +19,7 @@ export class AlbumController {
   constructor(
     private albumService: AlbumService,
     private artistService: ArtistService,
+    private trackService: TrackService,
   ) {}
 
   @Get()
@@ -95,6 +97,13 @@ export class AlbumController {
     }
 
     this.albumService.delete(id);
+
+    const tracks = this.trackService.findAll();
+    tracks.forEach((track) => {
+      if (track.albumId === id) {
+        this.trackService.update(track.id, { albumId: null });
+      }
+    });
     return;
   }
 }
