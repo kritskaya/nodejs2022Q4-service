@@ -12,7 +12,6 @@ import {
   ParseUUIDPipe,
   ValidationPipe,
 } from '@nestjs/common';
-import { validate } from 'uuid';
 import { CreateUserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { User } from './interfaces/user.interface';
@@ -32,13 +31,6 @@ export class UserController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<UserResponse> {
-    // if (!validate(params.id)) {
-    //   throw new HttpException(
-    //     'Specified id is invalid',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-
     const user = await this.userService.findOne(id);
 
     if (!user) {
@@ -54,14 +46,9 @@ export class UserController {
   }
 
   @Post()
-  async create(@Body(ValidationPipe) dto: CreateUserDTO): Promise<UserResponse> {
-    // if (
-    //   typeof createUserDTO.login !== 'string' ||
-    //   typeof createUserDTO.password !== 'string'
-    // ) {
-    //   throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    // }
-
+  async create(
+    @Body(ValidationPipe) dto: CreateUserDTO,
+  ): Promise<UserResponse> {
     const newUser = this.userService.create(dto);
     const { password, ...userResponse } = newUser;
 
@@ -73,17 +60,6 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(ValidationPipe) updatePasswordDTO: UpdatePasswordDTO,
   ): Promise<UserResponse> {
-    // if (!validate(params.id)) {
-    //   throw new HttpException(
-    //     'Specified id is invalid',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-
-    // if (!updatePasswordDTO.oldPassword || !updatePasswordDTO.newPassword) {
-    //   throw new HttpException('Invalid data format', HttpStatus.BAD_REQUEST);
-    // }
-
     const user = this.userService.findOne(id);
     if (!user) {
       throw new HttpException(
@@ -108,13 +84,6 @@ export class UserController {
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() params) {
-    // if (!validate(params.id)) {
-    //   throw new HttpException(
-    //     'Specified id is invalid',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-
     const user = this.userService.findOne(params.id);
     if (!user) {
       throw new HttpException(
