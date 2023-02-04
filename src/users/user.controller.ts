@@ -83,8 +83,8 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() params) {
-    const user = this.userService.findOne(params.id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: string,) {
+    const user = this.userService.findOne(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
