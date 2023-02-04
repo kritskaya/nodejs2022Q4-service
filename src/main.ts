@@ -5,6 +5,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { cwd } from 'process';
 import { parse } from 'yaml';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,8 @@ async function bootstrap() {
 
   SwaggerModule.setup('doc', app, document);
 
-  await app.listen(4000);
+  dotenv.config();
+  const PORT = Number(process.env.PORT) || 4000;
+  await app.listen(PORT);
 }
 bootstrap();
