@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from 'src/albums/album.service';
 import { CreateArtistDTO, UpdateArtistDTO } from 'src/artists/dto/artist.dto';
+import { FavouritesService } from 'src/favourites/favotites.service';
 import { TrackService } from 'src/tracks/track.service';
 import { ArtistService } from './artist.service';
 import { Artist } from './interfaces/artist.interface';
@@ -21,9 +22,10 @@ import { Artist } from './interfaces/artist.interface';
 @Controller('artist')
 export class ArtistController {
   constructor(
-    private readonly artistService: ArtistService,
+    private artistService: ArtistService,
     private albumService: AlbumService,
     private trackService: TrackService,
+    private favsService: FavouritesService,
   ) {}
 
   @Get()
@@ -90,13 +92,19 @@ export class ArtistController {
       }
     });
 
-
     const tracks = this.trackService.findAll();
     tracks.forEach((track) => {
       if (track.artistId === id) {
         this.trackService.update(track.id, { artistId: null });
       }
     });
+
+    const favs = this.favsService.findArtists();
+    const isFav = favs.includes(id);
+    if (isFav) {
+      this.favsService.removeArtist(id);
+    }
+
     return;
   }
 }

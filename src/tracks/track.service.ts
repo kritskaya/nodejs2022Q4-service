@@ -28,7 +28,7 @@ export class TrackService {
     const newTrack: Track = {
       id: uuid4(),
       name: dto.name,
-      artistId: dto.albumId,
+      artistId: dto.artistId,
       albumId: dto.albumId,
       duration: dto.duration,
     };
