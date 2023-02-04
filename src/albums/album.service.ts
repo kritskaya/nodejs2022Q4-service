@@ -1,29 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { DBService } from 'src/db/db.service';
 import { v4 as uuid4 } from 'uuid';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
 import { Album } from './interfaces/album.interface';
 
 @Injectable()
 export class AlbumService {
-  private readonly albums: Album[] = [
-    {
-      id: '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4be2',
-      name: 'Album name',
-      year: 2020,
-      artistId: null,
-    },
-  ];
+  constructor(private dbService: DBService) {}
 
-  findAll(): Album[] {
-    return this.albums;
+  async findAll(): Promise<Album[]> {
+    return await this.dbService.getAllAlbums();
   }
 
-  findOne(id: string): Album {
-    const album = this.albums.find((album) => album.id === id);
-    return album;
+  async findOne(id: string): Promise<Album> {
+    return await this.dbService.getAlbum(id);
   }
 
-  create(createAlbumDTO: CreateAlbumDTO): Album {
+  async create(createAlbumDTO: CreateAlbumDTO): Promise<Album> {
     const newAlbum: Album = {
       id: uuid4(),
       name: createAlbumDTO.name,
@@ -31,12 +24,13 @@ export class AlbumService {
       artistId: createAlbumDTO.artistId,
     };
 
-    this.albums.push(newAlbum);
+    await this.dbService.createAlbum(newAlbum);
+
     return newAlbum;
   }
 
-  update(id: string, updateAlbumDTO: UpdateAlbumDTO): Album {
-    const album = this.findOne(id);
+  async update(id: string, updateAlbumDTO: UpdateAlbumDTO): Promise<Album> {
+    const album = await this.dbService.getAlbum(id);
 
     const updatedAlbum: Album = {
       ...album,
@@ -48,14 +42,25 @@ export class AlbumService {
           : album.artistId,
     };
 
-    const index = this.albums.findIndex((album) => album.id === id);
-    this.albums[index] = updatedAlbum;
+    await this.dbService.updateAlbum(id, updatedAlbum);
 
     return updatedAlbum;
   }
 
-  delete(id: string) {
-    const index = this.albums.findIndex((album) => album.id === id);
-    this.albums.splice(index, 1);
+  async delete(id: string) {
+    await this.dbService.deleteAlbum(id);
+
+    const tracks = await this.dbService.getAllTracks();
+    for (const track of tracks) {
+      if (track.albumId === id) {
+        await this.dbService.updateTrack(track.id, { ...track, albumId: null });
+      }
+    }
+
+    const favs = await this.dbService.getFavAlbums();
+    const isFav = favs.includes(id);
+    if (isFav) {
+      await this.dbService.removeAlbumFromFav(id);
+    }
   }
 }

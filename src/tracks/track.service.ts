@@ -1,30 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { DBService } from 'src/db/db.service';
 import { Track } from 'src/tracks/interfaces/track.interface';
 import { v4 as uuid4 } from 'uuid';
 import { CreateTrackDTO, UpdateTrackDTO } from './dto/track.dto';
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: Track[] = [
-    {
-      id: '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bee',
-      name: 'Track name',
-      artistId: null,
-      albumId: null,
-      duration: 125,
-    },
-  ];
+  constructor(private dbService: DBService) {}
 
-  findAll(): Track[] {
-    return this.tracks;
+  async findAll(): Promise<Track[]> {
+    return await this.dbService.getAllTracks();
   }
 
-  findOne(id: string): Track {
-    const track = this.tracks.find((track) => track.id === id);
-    return track;
+  async findOne(id: string): Promise<Track> {
+    return await this.dbService.getTrack(id);
   }
 
-  create(dto: CreateTrackDTO) {
+  async create(dto: CreateTrackDTO): Promise<Track> {
     const newTrack: Track = {
       id: uuid4(),
       name: dto.name,
@@ -33,12 +25,13 @@ export class TrackService {
       duration: dto.duration,
     };
 
-    this.tracks.push(newTrack);
+    await this.dbService.createTrack(newTrack);
+
     return newTrack;
   }
 
-  update(id: string, dto: UpdateTrackDTO) {
-    const track = this.findOne(id);
+  async update(id: string, dto: UpdateTrackDTO): Promise<Track> {
+    const track = await this.dbService.getTrack(id);
 
     const updatedTrack: Track = {
       ...track,
@@ -50,14 +43,18 @@ export class TrackService {
       duration: dto.duration ? dto.duration : track.duration,
     };
 
-    const index = this.tracks.findIndex((track) => track.id === id);
-    this.tracks[index] = updatedTrack;
+    await this.dbService.updateTrack(id, updatedTrack);
 
     return updatedTrack;
   }
 
-  delete(id: string) {
-    const index = this.tracks.findIndex((track) => track.id === id);
-    this.tracks.splice(index, 1);
+  async delete(id: string) {
+    await this.dbService.deleteTrack(id);
+
+    const favs = await this.dbService.getFavTracks();
+    const isFav = favs.includes(id);
+    if (isFav) {
+      await this.dbService.removeTrackFromFav(id);
+    }
   }
 }

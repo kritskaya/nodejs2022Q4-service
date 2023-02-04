@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from 'src/albums/album.service';
 import { ArtistService } from 'src/artists/artist.service';
-import { FavouritesService } from 'src/favourites/favotites.service';
 import { CreateTrackDTO, UpdateTrackDTO } from './dto/track.dto';
 import { Track } from './interfaces/track.interface';
 import { TrackService } from './track.service';
@@ -25,7 +24,6 @@ export class TrackController {
     private trackService: TrackService,
     private albumService: AlbumService,
     private artistService: ArtistService,
-    private favsService: FavouritesService,
   ) {}
 
   @Get()
@@ -35,7 +33,7 @@ export class TrackController {
 
   @Get(':id')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Track> {
-    const track = this.trackService.findOne(id);
+    const track = await this.trackService.findOne(id);
     if (!track) {
       throw new HttpException(
         'Track with specified id is not found',
@@ -49,7 +47,7 @@ export class TrackController {
   @Post()
   async create(@Body(ValidationPipe) dto: CreateTrackDTO): Promise<Track> {
     if (dto.albumId) {
-      const album = this.albumService.findOne(dto.albumId);
+      const album = await this.albumService.findOne(dto.albumId);
       if (!album) {
         throw new HttpException(
           'Album with specified id is not found',
@@ -59,7 +57,7 @@ export class TrackController {
     }
 
     if (dto.artistId) {
-      const artist = this.artistService.findOne(dto.artistId);
+      const artist = await this.artistService.findOne(dto.artistId);
       if (!artist) {
         throw new HttpException(
           'Artist with specified id is not found',
@@ -68,7 +66,7 @@ export class TrackController {
       }
     }
 
-    const newTrack = this.trackService.create(dto);
+    const newTrack = await this.trackService.create(dto);
     return newTrack;
   }
 
@@ -77,7 +75,7 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(ValidationPipe) dto: UpdateTrackDTO,
   ): Promise<Track> {
-    const track = this.trackService.findOne(id);
+    const track = await this.trackService.findOne(id);
     if (!track) {
       throw new HttpException(
         'Track with specified id is not found',
@@ -86,7 +84,7 @@ export class TrackController {
     }
 
     if (dto.albumId) {
-      const album = this.albumService.findOne(dto.albumId);
+      const album = await this.albumService.findOne(dto.albumId);
       if (!album) {
         throw new HttpException(
           'Album with specified id is not found',
@@ -96,7 +94,7 @@ export class TrackController {
     }
 
     if (dto.artistId) {
-      const artist = this.artistService.findOne(dto.artistId);
+      const artist = await this.artistService.findOne(dto.artistId);
       if (!artist) {
         throw new HttpException(
           'Artist with specified id is not found',
@@ -105,14 +103,14 @@ export class TrackController {
       }
     }
 
-    const updatedTrack = this.trackService.update(id, dto);
+    const updatedTrack = await this.trackService.update(id, dto);
     return updatedTrack;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    const track = this.trackService.findOne(id);
+    const track = await this.trackService.findOne(id);
     if (!track) {
       throw new HttpException(
         'Track with specified id is not found',
@@ -120,14 +118,7 @@ export class TrackController {
       );
     }
 
-    this.trackService.delete(id);
-
-    const favs = this.favsService.findTracks();
-    const isFav = favs.includes(id);
-    if (isFav) {
-      this.favsService.removeTrack(id);
-    }
-
+    await this.trackService.delete(id);
     return;
   }
 }

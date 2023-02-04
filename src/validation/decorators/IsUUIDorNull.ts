@@ -1,6 +1,5 @@
 import {
   registerDecorator,
-  validate,
   ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
@@ -10,7 +9,7 @@ import { validate as validUUID } from 'uuid';
 
 @ValidatorConstraint({ name: 'IsUUIDorNull', async: true })
 export class IsUUIDorNullConstraint implements ValidatorConstraintInterface {
-  validate(value: any, args: ValidationArguments) {
+  validate(value: any) {
     return validUUID(value) || value === null;
   }
 
@@ -20,7 +19,7 @@ export class IsUUIDorNullConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsUUIDorNull(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: unknown, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName,

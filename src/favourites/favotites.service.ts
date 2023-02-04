@@ -1,72 +1,63 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { Favorites } from './interfaces/favourites.interface';
+import { DBService } from 'src/db/db.service';
+import { FavoritesRepsonse } from './dto/FavouritesResponse';
 
 @Injectable()
 export class FavouritesService {
-  private readonly favs: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
+  constructor(private dbService: DBService) {}
 
-  findAll(): Favorites {
-    return this.favs;
+  async findAll(): Promise<FavoritesRepsonse> {
+    const favIds = await this.dbService.getAllFavs();
+    const artists = await Promise.all(
+      favIds.artists.map(async (id) => this.dbService.getArtist(id)),
+    );
+    const albums = await Promise.all(
+      favIds.albums.map((id) => this.dbService.getAlbum(id)),
+    );
+    const tracks = await Promise.all(
+      favIds.tracks.map((id) => this.dbService.getTrack(id)),
+    );
+
+    return {
+      artists,
+      albums,
+      tracks,
+    };
   }
 
-  findTracks(): String[] {
-    return this.favs.tracks;
+  async findTracks(): Promise<string[]> {
+    return await this.dbService.getFavTracks();
   }
 
-  findAlbums(): String[] {
-    return this.favs.albums;
+  async findAlbums(): Promise<string[]> {
+    return await this.dbService.getFavAlbums();
   }
 
-  findArtists(): String[] {
-    return this.favs.artists;
+  async findArtists(): Promise<string[]> {
+    return await this.dbService.getFavArtists();
   }
 
-  addTrack(id: string): string {
-    const track = this.favs.tracks.find((trackId) => trackId === id);
-    if (track) {
-      return 'This track has already added to favourites ealier';
-    }
-
-    this.favs.tracks.push(id);
-    return 'Track successfully added to favourites';
+  async addTrack(id: string): Promise<string> {
+    return await this.dbService.addTrackToFav(id);
   }
 
-  removeTrack(id: string) {
-    const index = this.favs.tracks.findIndex((trackId) => trackId === id);
-    this.favs.tracks.splice(index, 1);
+  async removeTrack(id: string) {
+    await this.dbService.removeTrackFromFav(id);
   }
 
-  addArtist(id: string) {
-    const artist = this.favs.artists.find((artistId) => artistId === id);
-    if (artist) {
-      return 'This artist has already added to favourites ealier';
-    }
-
-    this.favs.artists.push(id);
-    return 'Artist successfully added to favourites';
+  async addArtist(id: string): Promise<string> {
+    return await this.dbService.addArtistToFav(id);
   }
 
-  removeArtist(id: string) {
-    const index = this.favs.artists.findIndex((artistId) => artistId === id);
-    this.favs.artists.splice(index, 1);
+  async removeArtist(id: string) {
+    await this.dbService.removeArtistFromFav(id);
   }
 
-  addAlbum(id: string) {
-    const album = this.favs.albums.find((albumId) => albumId === id);
-    if (album) {
-      return 'This album has already added to favourites ealier';
-    }
-
-    this.favs.albums.push(id);
-    return 'Album successfully added to favourites';
+  async addAlbum(id: string): Promise<string> {
+    return await this.dbService.addAlbumToFav(id);
   }
 
-  removeAlbum(id: string) {
-    const index = this.favs.tracks.findIndex((albumId) => albumId === id);
-    this.favs.albums.splice(index, 1);
+  async removeAlbum(id: string) {
+    await this.dbService.removeAlbumFromFav(id);
   }
 }

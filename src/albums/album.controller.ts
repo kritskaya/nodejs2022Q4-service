@@ -9,8 +9,6 @@ import {
 } from '@nestjs/common';
 import { Body, Delete, HttpCode, Post, Put } from '@nestjs/common/decorators';
 import { ArtistService } from 'src/artists/artist.service';
-import { FavouritesService } from 'src/favourites/favotites.service';
-import { TrackService } from 'src/tracks/track.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
 import { Album } from './interfaces/album.interface';
@@ -20,8 +18,6 @@ export class AlbumController {
   constructor(
     private albumService: AlbumService,
     private artistService: ArtistService,
-    private trackService: TrackService,
-    private favsService: FavouritesService
   ) {}
 
   @Get()
@@ -31,7 +27,7 @@ export class AlbumController {
 
   @Get(':id')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
-    const album = this.albumService.findOne(id);
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new HttpException(
         'Album with specified id is not found',
@@ -47,7 +43,7 @@ export class AlbumController {
     @Body(ValidationPipe) createAlbumDTO: CreateAlbumDTO,
   ): Promise<Album> {
     if (createAlbumDTO.artistId) {
-      const artist = this.artistService.findOne(createAlbumDTO.artistId);
+      const artist = await this.artistService.findOne(createAlbumDTO.artistId);
       if (!artist) {
         throw new HttpException(
           'Artist with specified id is not found',
@@ -66,7 +62,7 @@ export class AlbumController {
     @Body(ValidationPipe) updateAlbumDTO: UpdateAlbumDTO,
   ): Promise<Album> {
     if (updateAlbumDTO.artistId) {
-      const artist = this.artistService.findOne(updateAlbumDTO.artistId);
+      const artist = await this.artistService.findOne(updateAlbumDTO.artistId);
       if (!artist) {
         throw new HttpException(
           'Artist with specified id is not found',
@@ -75,7 +71,7 @@ export class AlbumController {
       }
     }
 
-    const album = this.albumService.findOne(id);
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new HttpException(
         'album with specified id is not found',
@@ -83,14 +79,14 @@ export class AlbumController {
       );
     }
 
-    const updatedAlbum = this.albumService.update(id, updateAlbumDTO);
+    const updatedAlbum = await this.albumService.update(id, updateAlbumDTO);
     return updatedAlbum;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    const album = this.albumService.findOne(id);
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new HttpException(
         'album with specified id is not found',
@@ -99,19 +95,6 @@ export class AlbumController {
     }
 
     this.albumService.delete(id);
-
-    const tracks = this.trackService.findAll();
-    tracks.forEach((track) => {
-      if (track.albumId === id) {
-        this.trackService.update(track.id, { albumId: null });
-      }
-    });
-
-    const favs = this.favsService.findAlbums();
-    const isFav = favs.includes(id);
-    if (isFav) {
-      this.favsService.removeAlbum(id);
-    }
     return;
   }
 }

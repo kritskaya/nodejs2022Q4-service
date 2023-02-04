@@ -3,29 +3,21 @@ import { v4 as uuid } from 'uuid';
 import { CreateUserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { User } from './interfaces/user.interface';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [
-    {
-      id: '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed',
-      login: 'testUser',
-      password: 'password',
-      version: 1,
-      createdAt: 1674784901,
-      updatedAt: 1674784901,
-    },
-  ];
+  constructor(private dbService: DBService) {}
 
-  findAll(): User[] {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    return await this.dbService.getAllUsers();
   }
 
-  findOne(id: string): User {
-    return this.users.find((user) => user.id === id);
+  async findOne(id: string): Promise<User> {
+    return this.dbService.getUser(id);
   }
 
-  create(userDTO: CreateUserDTO): User {
+  async create(userDTO: CreateUserDTO): Promise<User> {
     const id = uuid();
     const version = 1;
     const createdAt = Date.now();
@@ -39,13 +31,13 @@ export class UserService {
       updatedAt: createdAt,
     };
 
-    this.users.push(newUser);
+    await this.dbService.createUser(newUser);
 
     return newUser;
   }
 
-  update(id: string, passwordDTO: UpdatePasswordDTO): User {
-    const user = this.users.find((item) => item.id === id);
+  async update(id: string, passwordDTO: UpdatePasswordDTO): Promise<User> {
+    const user = await this.dbService.getUser(id);
 
     const updatedUser: User = {
       ...user,
@@ -54,14 +46,12 @@ export class UserService {
       updatedAt: Date.now(),
     };
 
-    const userIndex = this.users.findIndex((item) => item.id === id);
-    this.users[userIndex] = updatedUser;
+    await this.dbService.updateUser(id, updatedUser);
 
     return updatedUser;
   }
 
-  delete(id: string) {
-    const userIndex = this.users.findIndex((item) => item.id === id);
-    this.users.splice(userIndex, 1);
+  async delete(id: string) {
+    await this.dbService.deleteUser(id);
   }
 }

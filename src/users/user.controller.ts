@@ -40,19 +40,28 @@ export class UserController {
       );
     }
 
-    const { password, ...userResponse } = user;
-
-    return userResponse;
+    return {
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
   @Post()
   async create(
     @Body(ValidationPipe) dto: CreateUserDTO,
   ): Promise<UserResponse> {
-    const newUser = this.userService.create(dto);
-    const { password, ...userResponse } = newUser;
+    const newUser = await this.userService.create(dto);
 
-    return userResponse;
+    return {
+      id: newUser.id,
+      login: newUser.login,
+      version: newUser.version,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
+    };
   }
 
   @Put(':id')
@@ -60,7 +69,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(ValidationPipe) updatePasswordDTO: UpdatePasswordDTO,
   ): Promise<UserResponse> {
-    const user = this.userService.findOne(id);
+    const user = await this.userService.findOne(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
@@ -75,16 +84,24 @@ export class UserController {
       );
     }
 
-    const updatedUser = this.userService.update(user.id, updatePasswordDTO);
+    const updatedUser = await this.userService.update(
+      user.id,
+      updatePasswordDTO,
+    );
 
-    const { password, ...userResponse } = updatedUser;
-    return userResponse;
+    return {
+      id: updatedUser.id,
+      login: updatedUser.login,
+      version: updatedUser.version,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt,
+    };
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param('id', new ParseUUIDPipe()) id: string,) {
-    const user = this.userService.findOne(id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.userService.findOne(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
