@@ -12,7 +12,10 @@ import {
 import { AlbumService } from 'src/albums/album.service';
 import { ArtistService } from 'src/artists/artist.service';
 import { TrackService } from 'src/tracks/track.service';
-import { FavoritesRepsonse } from './dto/FavouritesResponse';
+import {
+  CreateUpdateFavoriteResponse,
+  FavoritesRepsonse,
+} from './dto/FavouritesResponse';
 import { FavouritesService } from './favotites.service';
 
 @Controller('favs')
@@ -32,7 +35,7 @@ export class FavouritesController {
   @Post('track/:id')
   async addTrack(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<string> {
+  ): Promise<CreateUpdateFavoriteResponse> {
     const track = await this.trackService.findOne(id);
     if (!track) {
       throw new HttpException(
@@ -42,7 +45,7 @@ export class FavouritesController {
     }
 
     const message = await this.favouritesService.addTrack(id);
-    return message;
+    return { message };
   }
 
   @Delete('track/:id')
@@ -63,7 +66,7 @@ export class FavouritesController {
   @Post('album/:id')
   async addAlbum(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<string> {
+  ): Promise<CreateUpdateFavoriteResponse> {
     const album = await this.albumService.findOne(id);
     if (!album) {
       throw new HttpException(
@@ -73,7 +76,7 @@ export class FavouritesController {
     }
 
     const message = await this.favouritesService.addAlbum(id);
-    return message;
+    return { message };
   }
 
   @Delete('album/:id')
@@ -94,7 +97,7 @@ export class FavouritesController {
   @Post('artist/:id')
   async addArtist(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<string> {
+  ): Promise<CreateUpdateFavoriteResponse> {
     const artist = await this.artistService.findOne(id);
     if (!artist) {
       throw new HttpException(
@@ -104,7 +107,7 @@ export class FavouritesController {
     }
 
     const message = await this.favouritesService.addArtist(id);
-    return message;
+    return { message };
   }
 
   @Delete('artist/:id')

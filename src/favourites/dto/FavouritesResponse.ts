@@ -7,3 +7,7 @@ export interface FavoritesRepsonse {
   albums: Album[];
   tracks: Track[];
 }
+
+export interface CreateUpdateFavoriteResponse {
+  message: string;
+}
