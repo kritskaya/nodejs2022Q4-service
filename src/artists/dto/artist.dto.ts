@@ -8,7 +8,7 @@ export class CreateArtistDTO {
 
   @IsOptional()
   @IsBoolean()
-  grammy: boolean = false;
+  grammy = false;
 }
 
 export class UpdateArtistDTO extends PartialType(CreateArtistDTO) {}
