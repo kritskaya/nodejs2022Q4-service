@@ -71,7 +71,20 @@ Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
-### Implemented routes
+## Additional description
+
+1. Creation new entities:
+- for creation new Album only ``name`` and ``year`` fields are required. If value of ``artistId`` is empty the ``null`` will be assigned to this field by default
+- for creation new Artist only ``name`` field is required. If value of ``grammy`` is empty the ``false`` will be assigned to this field by default
+- for creation new Track only ``name`` and ``duration`` fields are required. If value of ``artistId`` and/or value of ``albumId`` is empty the ``null`` will be assigned to these fields by default
+
+2. For testing OpenAPI you can open and test it:
+- in a browser with address ``http://localhost:4000`` (or replace port with value in .env)
+- or can copy the content of api.yaml file to [Swagger Editor](https://editor.swagger.io/), change server url to the value "http://localhost:4000"  (or replace port with value in .env)
+![image](https://user-images.githubusercontent.com/37663828/217054011-23b43be4-3c73-41e6-9521-377489882096.png)
+
+
+## Implemented routes
 
  * `Users` (`/user` route)
     * `GET /user` - get all users
