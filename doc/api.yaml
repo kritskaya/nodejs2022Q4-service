@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: /api
+  - url: /
 
 components:
   schemas:
@@ -30,7 +30,6 @@ components:
       required:
         - id
         - login
-        - password
     Artist:
       type: object
       properties:
@@ -106,7 +105,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Track'
-  
+
+paths:
   /user:
     get:
       tags:
@@ -407,8 +407,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Album'
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Album

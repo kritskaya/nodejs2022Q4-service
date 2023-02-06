@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   const file = await readFile(join(cwd(), 'doc', 'api.yaml'), 'utf8');
   const document = parse(file);
