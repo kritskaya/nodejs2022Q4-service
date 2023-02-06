@@ -30,6 +30,7 @@ components:
       required:
         - id
         - login
+        - password
     Artist:
       type: object
       properties:
@@ -64,6 +65,7 @@ components:
       required:
         - id
         - name
+        - year
     Track:
       type: object
       properties:

@@ -41,7 +41,8 @@ export class ArtistController {
 
   @Post()
   async create(
-    @Body(ValidationPipe) createArtistDTO: CreateArtistDTO,
+    @Body(new ValidationPipe({ transform: true }))
+    createArtistDTO: CreateArtistDTO,
   ): Promise<Artist> {
     const newArtist = await this.artistService.create(createArtistDTO);
     return newArtist;

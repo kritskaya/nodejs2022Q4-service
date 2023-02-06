@@ -40,7 +40,8 @@ export class AlbumController {
 
   @Post()
   async create(
-    @Body(ValidationPipe) createAlbumDTO: CreateAlbumDTO,
+    @Body(new ValidationPipe({ transform: true }))
+    createAlbumDTO: CreateAlbumDTO,
   ): Promise<Album> {
     if (createAlbumDTO.artistId) {
       const artist = await this.artistService.findOne(createAlbumDTO.artistId);
