@@ -1,57 +1,63 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
 import { CreateUserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
-import { User } from './interfaces/user.interface';
-import { DBService } from 'src/db/db.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'prisma/prisma-client';
 
 @Injectable()
 export class UserService {
-  constructor(private dbService: DBService) {}
+  constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<User[]> {
-    return await this.dbService.getAllUsers();
+    return await this.prisma.user.findMany();
   }
 
   async findOne(id: string): Promise<User> {
-    return this.dbService.getUser(id);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return user;
   }
 
   async create(userDTO: CreateUserDTO): Promise<User> {
-    const id = uuid();
-    const version = 1;
-    const createdAt = Date.now();
-
-    const newUser = {
-      id,
-      login: userDTO.login,
-      password: userDTO.password,
-      version,
-      createdAt,
-      updatedAt: createdAt,
-    };
-
-    await this.dbService.createUser(newUser);
+    const newUser = await this.prisma.user.create({
+      data: {
+        login: userDTO.login,
+        password: userDTO.password,
+        version: 1,
+      },
+    });
 
     return newUser;
   }
 
   async update(id: string, passwordDTO: UpdatePasswordDTO): Promise<User> {
-    const user = await this.dbService.getUser(id);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
-    const updatedUser: User = {
-      ...user,
-      password: passwordDTO.newPassword,
-      version: user.version + 1,
-      updatedAt: Date.now(),
-    };
-
-    await this.dbService.updateUser(id, updatedUser);
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: passwordDTO.newPassword,
+        version: user.version + 1,
+      },
+    });
 
     return updatedUser;
   }
 
   async delete(id: string) {
-    await this.dbService.deleteUser(id);
+    await this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
