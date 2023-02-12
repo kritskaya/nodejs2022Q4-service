@@ -95,7 +95,7 @@ export class AlbumController {
       );
     }
 
-    this.albumService.delete(id);
+    await this.albumService.delete(id);
     return;
   }
 }

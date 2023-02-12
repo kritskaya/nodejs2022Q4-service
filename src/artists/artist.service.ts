@@ -59,5 +59,31 @@ export class ArtistService {
         id,
       },
     });
+
+    // const albums = await this.dbService.getAllAlbums();
+    // for (const album of albums) {
+    //   if (album.artistId === id) {
+    //     await this.dbService.updateAlbum(album.id, {
+    //       ...album,
+    //       artistId: null,
+    //     });
+    //   }
+    // }
+
+    // const tracks = await this.dbService.getAllTracks();
+    // for (const track of tracks) {
+    //   if (track.artistId === id) {
+    //     await this.dbService.updateTrack(track.id, {
+    //       ...track,
+    //       artistId: null,
+    //     });
+    //   }
+    // }
+
+    // const favs = await this.dbService.getFavArtists();
+    // const isFav = favs.includes(id);
+    // if (isFav) {
+    //   this.dbService.removeArtistFromFav(id);
+    // }
   }
 }
