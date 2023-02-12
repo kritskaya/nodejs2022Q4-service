@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { CreateArtistDTO, UpdateArtistDTO } from 'src/artists/dto/artist.dto';
 import { ArtistService } from './artist.service';
-import { Artist } from './interfaces/artist.interface';
+import { Artist } from 'prisma/prisma-client';
 
 @Controller('artist')
 export class ArtistController {
