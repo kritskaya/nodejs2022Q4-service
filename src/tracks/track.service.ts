@@ -54,16 +54,21 @@ export class TrackService {
   }
 
   async delete(id: string) {
+    const favs = await this.prisma.favouriteTrack.findMany();
+
+    const isFav = favs.find((fav) => fav.trackId === id);
+    if (isFav) {
+      await this.prisma.favouriteTrack.delete({
+        where: {
+          trackId: id,
+        },
+      });
+    }
+
     await this.prisma.track.delete({
       where: {
         id,
       },
     });
-
-    // const favs = await this.dbService.getFavTracks();
-    // const isFav = favs.includes(id);
-    // if (isFav) {
-    //   await this.dbService.removeTrackFromFav(id);
-    // }
   }
 }

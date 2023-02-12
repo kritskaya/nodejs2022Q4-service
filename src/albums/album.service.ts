@@ -52,23 +52,36 @@ export class AlbumService {
   }
 
   async delete(id: string): Promise<void> {
+    const tracks = await this.prisma.track.findMany();
+    for (const track of tracks) {
+      if (track.albumId === id) {
+        await this.prisma.track.update({
+          where: {
+            id: track.id,
+          },
+          data: {
+            ...track,
+            albumId: null,
+          },
+        });
+      }
+    }
+
+    const favs = await this.prisma.favouriteAlbum.findMany();
+
+    const isFav = favs.find((fav) => fav.albumId === id);
+    if (isFav) {
+      await this.prisma.favouriteAlbum.delete({
+        where: {
+          albumId: id,
+        },
+      });
+    }
+
     await this.prisma.album.delete({
       where: {
         id,
       },
     });
-
-    // const tracks = await this.dbService.getAllTracks();
-    // for (const track of tracks) {
-    //   if (track.albumId === id) {
-    //     await this.dbService.updateTrack(track.id, { ...track, albumId: null });
-    //   }
-    // }
-
-    // const favs = await this.dbService.getFavAlbums();
-    // const isFav = favs.includes(id);
-    // if (isFav) {
-    //   await this.dbService.removeAlbumFromFav(id);
-    // }
   }
 }
