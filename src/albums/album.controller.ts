@@ -11,7 +11,7 @@ import { Body, Delete, HttpCode, Post, Put } from '@nestjs/common/decorators';
 import { ArtistService } from 'src/artists/artist.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
-import { Album } from './interfaces/album.interface';
+import { Album } from '@prisma/client';
 
 @Controller('album')
 export class AlbumController {

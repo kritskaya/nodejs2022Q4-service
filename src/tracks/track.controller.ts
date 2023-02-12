@@ -15,7 +15,7 @@ import {
 import { AlbumService } from 'src/albums/album.service';
 import { ArtistService } from 'src/artists/artist.service';
 import { CreateTrackDTO, UpdateTrackDTO } from './dto/track.dto';
-import { Track } from './interfaces/track.interface';
+import { Track } from '@prisma/client';
 import { TrackService } from './track.service';
 
 @Controller('track')
