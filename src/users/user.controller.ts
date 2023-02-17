@@ -109,7 +109,7 @@ export class UserController {
       );
     }
 
-    this.userService.delete(user.id);
+    await this.userService.delete(user.id);
     return;
   }
 }
