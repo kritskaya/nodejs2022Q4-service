@@ -8,7 +8,13 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/kritskaya/nodejs2022Q4-service.git
+```
+
+## Switch the brabch
+
+```
+git checkout prisma-docker
 ```
 
 ## Installing NPM modules
@@ -19,11 +25,15 @@ npm install
 
 ## Running application
 
+rename ``.env.example`` to ``.env``
+
+Run the command:
+
 ```
-npm start
+docker compose up
 ```
 
-After starting the app on port (4000 as default) you can open
+After starting the app on port (4000 as default) you can open Postman or you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
