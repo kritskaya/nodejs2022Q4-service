@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prisma:migrate": "prisma migrate dev",
+    "docker:scan": "docker scan nodejs2022q2-service_node && docker scan nodejs2022q2-service_postgres",
+    "prisma:migrate:start": "prisma migrate dev && npm start",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -25,7 +26,7 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/jwt": "^9.0.0",
+    "@nestjs/jwt": "^10.0.0",
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
