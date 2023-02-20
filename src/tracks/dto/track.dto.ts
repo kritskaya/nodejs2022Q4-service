@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
-import { IsUUIDorNull } from 'src/validation/decorators/IsUUIDorNull';
 import { PartialType } from '@nestjs/mapped-types';
+import { IsUUIDorNull } from '../../validation/decorators/IsUUIDorNull';
 
 export class CreateTrackDTO {
   @IsNotEmpty()

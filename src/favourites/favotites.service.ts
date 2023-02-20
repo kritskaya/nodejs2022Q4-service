@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { DBService } from 'src/db/db.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { FavoritesRepsonse } from './dto/FavouritesResponse';
 
 @Injectable()

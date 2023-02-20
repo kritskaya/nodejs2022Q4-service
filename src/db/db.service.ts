@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { Album } from 'src/albums/interfaces/album.interface';
-import { Artist } from 'src/artists/interfaces/artist.interface';
-import { Favorites } from 'src/favourites/interfaces/favourites.interface';
-import { Track } from 'src/tracks/interfaces/track.interface';
-import { User } from 'src/users/interfaces/user.interface';
+import { Injectable } from '@nestjs/common'
+import { Album } from '../albums/interfaces/album.interface';
+import { Artist } from '../artists/interfaces/artist.interface';
+import { Favorites } from '../favourites/interfaces/favourites.interface';
+import { Track } from '../tracks/interfaces/track.interface';
+import { User } from '../users/interfaces/user.interface';
 
 @Injectable()
 export class DBService {
