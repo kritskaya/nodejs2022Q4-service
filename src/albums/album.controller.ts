@@ -8,10 +8,10 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { Body, Delete, HttpCode, Post, Put } from '@nestjs/common/decorators';
-import { ArtistService } from 'src/artists/artist.service';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
-import { Album } from './interfaces/album.interface';
+import { Album } from '@prisma/client';
+import { ArtistService } from '../artists/artist.service';
 
 @Controller('album')
 export class AlbumController {
@@ -95,7 +95,7 @@ export class AlbumController {
       );
     }
 
-    this.albumService.delete(id);
+    await this.albumService.delete(id);
     return;
   }
 }

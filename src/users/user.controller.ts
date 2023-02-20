@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
-import { User } from './interfaces/user.interface';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
+import { User } from 'prisma/prisma-client';
 
 @Controller('user')
 export class UserController {
@@ -44,8 +44,8 @@ export class UserController {
       id: user.id,
       login: user.login,
       version: user.version,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
     };
   }
 
@@ -59,8 +59,8 @@ export class UserController {
       id: newUser.id,
       login: newUser.login,
       version: newUser.version,
-      createdAt: newUser.createdAt,
-      updatedAt: newUser.updatedAt,
+      createdAt: newUser.createdAt.getTime(),
+      updatedAt: newUser.updatedAt.getTime(),
     };
   }
 
@@ -93,8 +93,8 @@ export class UserController {
       id: updatedUser.id,
       login: updatedUser.login,
       version: updatedUser.version,
-      createdAt: updatedUser.createdAt,
-      updatedAt: updatedUser.updatedAt,
+      createdAt: updatedUser.createdAt.getTime(),
+      updatedAt: updatedUser.updatedAt.getTime(),
     };
   }
 
@@ -109,7 +109,7 @@ export class UserController {
       );
     }
 
-    this.userService.delete(user.id);
+    await this.userService.delete(user.id);
     return;
   }
 }

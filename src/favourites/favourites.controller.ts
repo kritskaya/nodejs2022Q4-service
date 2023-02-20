@@ -9,9 +9,9 @@ import {
   Delete,
   HttpCode,
 } from '@nestjs/common';
-import { AlbumService } from 'src/albums/album.service';
-import { ArtistService } from 'src/artists/artist.service';
-import { TrackService } from 'src/tracks/track.service';
+import { AlbumService } from '../albums/album.service';
+import { ArtistService } from '../artists/artist.service';
+import { TrackService } from '../tracks/track.service';
 import {
   CreateUpdateFavoriteResponse,
   FavoritesRepsonse,
