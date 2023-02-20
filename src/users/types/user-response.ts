@@ -1,8 +1,3 @@
-// import { User } from '../interfaces/user.interface';
-import { User } from 'prisma/prisma-client';
-
-// export type UserResponse = Omit<User, 'password'>;
-
 export interface UserResponse {
   id: string; // uuid v4
   login: string;

@@ -6,8 +6,12 @@ services:
       dockerfile: ./docker/node/Dockerfile
     ports:
       - ${PORT}:${PORT}
+    restart: always
     depends_on:
       - postgres
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
     networks:
       - home-library
   postgres:
@@ -23,10 +27,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     restart: always
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - home-library
 networks:
   home-library:
+    driver: bridge
 volumes:
-  postgres:
+  postgres-data:
+  node-modules:

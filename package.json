@@ -8,6 +8,8 @@
   "scripts": {
     "docker:scan": "docker scan nodejs2022q2-service_node && docker scan nodejs2022q2-service_postgres",
     "prisma:migrate:start": "prisma migrate dev && npm start",
+    "prisma:nodemon": "prisma generate && prisma migrate dev && npm run nodemon",
+    "nodemon": "nodemon --legacy-watch -x ts-node ./src/main.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -24,7 +26,6 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
-    "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^10.0.0",
     "@nestjs/mapped-types": "^1.0.1",
@@ -61,6 +62,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
+    "nodemon": "^2.0.20",
     "prettier": "^2.3.2",
     "prisma": "^4.10.0",
     "source-map-support": "^0.5.20",

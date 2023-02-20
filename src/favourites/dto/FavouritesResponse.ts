@@ -1,4 +1,4 @@
-import { Album, Artist, Track } from "@prisma/client";
+import { Album, Artist, Track } from '@prisma/client';
 
 export interface FavoritesRepsonse {
   artists: Artist[];
