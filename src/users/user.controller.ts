@@ -31,7 +31,7 @@ export class UserController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<UserResponse> {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
 
     if (!user) {
       throw new HttpException(
@@ -69,7 +69,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(ValidationPipe) updatePasswordDTO: UpdatePasswordDTO,
   ): Promise<UserResponse> {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
@@ -101,7 +101,7 @@ export class UserController {
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',

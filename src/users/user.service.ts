@@ -12,10 +12,19 @@ export class UserService {
     return await this.prisma.user.findMany();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOneById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
+      },
+    });
+    return user;
+  }
+
+  async findOneByUsername(login: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        login,
       },
     });
     return user;
@@ -47,6 +56,26 @@ export class UserService {
       data: {
         password: passwordDTO.newPassword,
         version: user.version + 1,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async updateToken(id: string, refreshToken: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...user,
+        refreshToken
       },
     });
 
