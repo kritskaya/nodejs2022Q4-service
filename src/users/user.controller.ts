@@ -12,7 +12,7 @@ import {
   ParseUUIDPipe,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dto/user.dto';
+import { UserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
@@ -51,7 +51,7 @@ export class UserController {
 
   @Post()
   async create(
-    @Body(ValidationPipe) dto: CreateUserDTO,
+    @Body(ValidationPipe) dto: UserDTO,
   ): Promise<UserResponse> {
     const newUser = await this.userService.create(dto);
 

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDTO } from '../users/dto/user.dto';
+import { UserDTO } from '../users/dto/user.dto';
 import { UserService } from '../users/user.service';
 import * as argon2 from 'argon2';
 import { User } from '@prisma/client';
@@ -18,7 +18,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async sighUp(createUserDTO: CreateUserDTO) {
+  async signUp(createUserDTO: UserDTO) {
+    const user = await this.userService.findOneByUsername(createUserDTO.login);
+    if (user) {
+      throw new HttpException(
+        'user with specified login already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const passwordHash = await this.getHash(createUserDTO.password);
 
     const newUser = await this.userService.create({
@@ -32,15 +40,33 @@ export class AuthService {
     return tokens;
   }
 
-  async getHash(value: string): Promise<string> {
-    return argon2.hash(value);
+  async login(authUserDTO: UserDTO) {
+    const user = await this.userService.findOneByUsername(authUserDTO.login);
+    if (!user) {
+      throw new HttpException(
+        'user with specified login not found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const passwordMatch = await argon2.verify(
+      user.password,
+      authUserDTO.password,
+    );
+    if (!passwordMatch) {
+      throw new HttpException(
+        'no user with such login and password',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const tokens = await this.getTokens(authUserDTO);
+    await this.updateUserRefreshToken(user.id, tokens.refresh_token);
+    return tokens;
   }
 
-  async validateUser(username: string, password: string): Promise<User> {
-    const user = await this.userService.findOneByUsername(username);
-    if (user && user.password === password) {
-      return user;
-    }
+  async getHash(value: string): Promise<string> {
+    return argon2.hash(value);
   }
 
   async getTokens(user: Partial<User>) {

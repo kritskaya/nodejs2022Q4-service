@@ -8,15 +8,7 @@ const secret = process.env.JWT_SECRET_KEY;
 const expiresIn = process.env.TOKEN_EXPIRE_TIME;
 
 @Module({
-  imports: [
-    UserModule,
-    JwtModule.register({
-      secret,
-      signOptions: {
-        expiresIn,
-      },
-    }),
-  ],
+  imports: [UserModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService],
 })
