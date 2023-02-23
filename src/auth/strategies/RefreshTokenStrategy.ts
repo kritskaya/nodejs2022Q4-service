@@ -5,7 +5,7 @@ import { Request } from 'express';
 
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh',
+  'refresh-jwt',
 ) {
   constructor() {
     super({

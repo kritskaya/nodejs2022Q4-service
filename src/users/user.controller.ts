@@ -11,20 +11,29 @@ import {
   HttpCode,
   ParseUUIDPipe,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
-import { User } from 'prisma/prisma-client';
+import { AccessTokenGuard } from '../guards/AccessTokenGuard';
 
+@UseGuards(AccessTokenGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(): Promise<UserResponse[]> {
+    const users = await this.userService.findAll();
+    return users.map((user) => ({ 
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+    }));
   }
 
   @Get(':id')
@@ -50,9 +59,7 @@ export class UserController {
   }
 
   @Post()
-  async create(
-    @Body(ValidationPipe) dto: UserDTO,
-  ): Promise<UserResponse> {
+  async create(@Body(ValidationPipe) dto: UserDTO): Promise<UserResponse> {
     const newUser = await this.userService.create(dto);
 
     return {

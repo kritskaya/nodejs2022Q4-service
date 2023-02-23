@@ -11,11 +11,14 @@ import {
   Put,
   ParseUUIDPipe,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { Artist } from 'prisma/prisma-client';
 import { CreateArtistDTO, UpdateArtistDTO } from './dto/artist.dto';
+import { AccessTokenGuard } from '../guards/AccessTokenGuard';
 
+@UseGuards(AccessTokenGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}
