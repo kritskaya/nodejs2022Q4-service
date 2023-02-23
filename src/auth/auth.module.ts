@@ -4,9 +4,6 @@ import { UserModule } from '../users/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
-const secret = process.env.JWT_SECRET_KEY;
-const expiresIn = process.env.TOKEN_EXPIRE_TIME;
-
 @Module({
   imports: [UserModule, JwtModule.register({})],
   controllers: [AuthController],

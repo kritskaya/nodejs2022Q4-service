@@ -4,6 +4,7 @@ import { UserDTO } from '../users/dto/user.dto';
 import { UserService } from '../users/user.service';
 import * as argon2 from 'argon2';
 import { User } from '@prisma/client';
+import { JWTPayload } from './interfaces/jwt.payload.interface';
 
 const secret = process.env.JWT_SECRET_KEY;
 const expiresIn = process.env.TOKEN_EXPIRE_TIME;
@@ -70,7 +71,7 @@ export class AuthService {
   }
 
   async getTokens(user: Partial<User>) {
-    const payload = { sub: user.id, login: user.login };
+    const payload: JWTPayload = { sub: user.id, login: user.login };
     return {
       access_token: await this.jwtService.signAsync(payload, {
         secret,
