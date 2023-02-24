@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from '../albums/album.service';
 import { ArtistService } from '../artists/artist.service';
-import { AccessTokenGuard } from '../guards/AccessTokenGuard';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 import { TrackService } from '../tracks/track.service';
 import {
   CreateUpdateFavoriteResponse,

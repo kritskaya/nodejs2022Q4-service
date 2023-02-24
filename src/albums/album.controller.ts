@@ -7,12 +7,19 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { Body, Delete, HttpCode, Post, Put, UseGuards } from '@nestjs/common/decorators';
+import {
+  Body,
+  Delete,
+  HttpCode,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common/decorators';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/album.dto';
 import { Album } from '@prisma/client';
 import { ArtistService } from '../artists/artist.service';
-import { AccessTokenGuard } from '../guards/AccessTokenGuard';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 
 @UseGuards(AccessTokenGuard)
 @Controller('album')

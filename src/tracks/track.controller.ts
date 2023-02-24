@@ -11,14 +11,14 @@ import {
   HttpCode,
   ParseUUIDPipe,
   ValidationPipe,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { CreateTrackDTO, UpdateTrackDTO } from './dto/track.dto';
 import { Track } from '@prisma/client';
 import { TrackService } from './track.service';
 import { AlbumService } from '../albums/album.service';
 import { ArtistService } from '../artists/artist.service';
-import { AccessTokenGuard } from '../guards/AccessTokenGuard';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 
 @UseGuards(AccessTokenGuard)
 @Controller('track')

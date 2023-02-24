@@ -16,7 +16,7 @@ import {
 import { ArtistService } from './artist.service';
 import { Artist } from 'prisma/prisma-client';
 import { CreateArtistDTO, UpdateArtistDTO } from './dto/artist.dto';
-import { AccessTokenGuard } from '../guards/AccessTokenGuard';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 
 @UseGuards(AccessTokenGuard)
 @Controller('artist')

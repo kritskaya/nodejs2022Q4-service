@@ -17,7 +17,7 @@ import { UserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
-import { AccessTokenGuard } from '../guards/AccessTokenGuard';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 
 @UseGuards(AccessTokenGuard)
 @Controller('user')
@@ -27,7 +27,8 @@ export class UserController {
   @Get()
   async findAll(): Promise<UserResponse[]> {
     const users = await this.userService.findAll();
-    return users.map((user) => ({ 
+    
+    return users.map((user) => ({
       id: user.id,
       login: user.login,
       version: user.version,

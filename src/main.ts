@@ -6,9 +6,11 @@ import { join } from 'path';
 import { cwd } from 'process';
 import { parse } from 'yaml';
 import * as dotenv from 'dotenv';
+import { HttpExceptionFilter } from './common/exception-filters/HttpExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
 
   const file = await readFile(join(cwd(), 'doc', 'api.yaml'), 'utf8');
