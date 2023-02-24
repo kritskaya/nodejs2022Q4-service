@@ -36,7 +36,7 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(newUser);
-    await this.updateUserRefreshToken(newUser.id, tokens.refresh_token);
+    await this.updateUserRefreshToken(newUser.id, tokens.refreshToken);
 
     return tokens;
   }
@@ -62,7 +62,7 @@ export class AuthService {
     }
 
     const tokens = await this.getTokens(authUserDTO);
-    await this.updateUserRefreshToken(user.id, tokens.refresh_token);
+    await this.updateUserRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -73,11 +73,11 @@ export class AuthService {
   async getTokens(user: Partial<User>) {
     const payload: JWTPayload = { sub: user.id, login: user.login };
     return {
-      access_token: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(payload, {
         secret,
         expiresIn,
       }),
-      refresh_token: await this.jwtService.signAsync(payload, {
+      refreshToken: await this.jwtService.signAsync(payload, {
         secret: refreshSecret,
         expiresIn: refreshExpiresIn,
       }),
@@ -87,5 +87,33 @@ export class AuthService {
   async updateUserRefreshToken(id: string, refreshToken: string) {
     const refreshTokenHash = await this.getHash(refreshToken);
     await this.userService.updateToken(id, refreshToken);
+  }
+
+  async refreshAuthTokens(userId: string, refreshToken: string) {
+    const user = await this.userService.findOneById(userId);
+    if (!user) {
+      throw new HttpException(
+        'user with specified id not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (!user.refreshToken) {
+      throw new HttpException(
+        'invalid authetication data',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    if (user.refreshToken !== refreshToken) {
+      throw new HttpException(
+        'invalid or expired token',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const tokens = await this.getTokens(user);
+    await this.updateUserRefreshToken(user.id, refreshToken);
+    return tokens;
   }
 }
