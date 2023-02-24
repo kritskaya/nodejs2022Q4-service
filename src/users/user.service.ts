@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async findOneByUsername(login: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: {
         login,
       },

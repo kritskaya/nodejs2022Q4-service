@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  HttpException,
-  HttpStatus,
   Post,
 } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common/pipes';
@@ -18,7 +16,6 @@ import { Request } from 'express';
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private userService: UserService,
   ) {}
 
   @Post('signup')
