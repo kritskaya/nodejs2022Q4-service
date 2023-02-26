@@ -46,9 +46,14 @@ export class LoggingService extends Logger {
   }
 
   writeToFile(level: LogMethods, message: string) {
-    const filePath = join(process.env.PWD, 'library-service.log');
+    const filePath = join(process.env.PWD, 'common-report.log');
+    const errorsFilePath = join(process.env.PWD, 'errors-report.log');
 
     const time = new Date().toLocaleString();
     appendFile(filePath, `${time}   ${level.toUpperCase()} - ${message}\n`);
+
+    if (level === 'error') {
+      appendFile(errorsFilePath, `${time}   ${level.toUpperCase()} - ${message}\n`);
+    }
   }
 }
