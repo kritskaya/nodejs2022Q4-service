@@ -29,9 +29,9 @@ async function bootstrap() {
     logger.error(`Uncaught Exception thrown: ${err}`);
     exit(1);
   });
-  
+
   process.on('unhandledRejection', (reason, p) => {
-    logger.error(`Unhandled Rejection at Promise ${p} with reason: ${reason}`);
+    logger.error(`Unhandled Rejection at Promise with reason: ${reason}`);
   });
 }
 bootstrap();

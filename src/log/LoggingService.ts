@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { appendFile } from 'fs/promises';
+import { appendFileSync, renameSync, statSync } from 'fs';
 import { join } from 'path';
 
 type LogMethods = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
@@ -49,11 +49,38 @@ export class LoggingService extends Logger {
     const filePath = join(process.env.PWD, 'common-report.log');
     const errorsFilePath = join(process.env.PWD, 'errors-report.log');
 
+    const maxSize = Number(process.env.MAX_LOG_FILE_SIZE) || 1000;
+
+    try {
+      const stats = statSync(filePath);
+
+      if (stats.size > maxSize * 1024) {
+        renameSync(
+          filePath,
+          filePath.replace(/.log$/, `-${new Date().getTime()}-old.log`),
+        );
+      }
+    } catch (err) {}
+
     const time = new Date().toLocaleString();
-    appendFile(filePath, `${time}   ${level.toUpperCase()} - ${message}\n`);
+    appendFileSync(filePath, `${time}   ${level.toUpperCase()} - ${message}\n`);
 
     if (level === 'error') {
-      appendFile(errorsFilePath, `${time}   ${level.toUpperCase()} - ${message}\n`);
+      try {
+        const errorsStats = statSync(errorsFilePath);
+
+        if (errorsStats.size > maxSize * 1024) {
+          renameSync(
+            errorsFilePath,
+            errorsFilePath.replace(/.log$/, `-${new Date().getTime()}-old.log`),
+          );
+        }
+      } catch (err) {}
+
+      appendFileSync(
+        errorsFilePath,
+        `${time}   ${level.toUpperCase()} - ${message}\n`,
+      );
     }
   }
 }
