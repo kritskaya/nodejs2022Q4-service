@@ -14,11 +14,19 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = response;
       const contentLength = response.get('content-length');
 
-      this.logger.log(
-        `Request: ${method} ${protocol}://${hostname}${originalUrl} query: ${JSON.stringify(
-          query,
-        )} body: ${JSON.stringify(body)}; Response: ${statusCode}`,
-      );
+      if (statusCode !== 500) {
+        this.logger.log(
+          `Request: ${method} ${protocol}://${hostname}${originalUrl} query: ${JSON.stringify(
+            query,
+          )} body: ${JSON.stringify(body)}; Response: ${statusCode}`,
+        );
+      } else {
+        this.logger.error(
+          `Request: ${method} ${protocol}://${hostname}${originalUrl} query: ${JSON.stringify(
+            query,
+          )} body: ${JSON.stringify(body)}; Response: ${statusCode}`,
+        );
+      }
     });
 
     next();
