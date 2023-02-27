@@ -1,12 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, HttpException, HttpStatus } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { UserDTO } from '../users/dto/user.dto';
 import { SignUpResponse } from './interfaces/signup.interface';
-import { UserService } from '../users/user.service';
 import { AuthService } from './auth.service';
-import { Get, Req, UseGuards } from '@nestjs/common/decorators';
+import { UseGuards } from '@nestjs/common/decorators';
 import { RefreshTokenGuard } from '../common/guards/RefreshTokenGuard';
-import { Request } from 'express';
+import { RefreshTokenDTO } from './dto/TokenDTO';
 
 @Controller('auth')
 export class AuthController {
@@ -25,10 +24,14 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Get('refresh')
-  async refreshAuthTokens(@Req() request: Request) {
-    const userId = request.user['sub'];
-    const refreshToken = request.user['refreshToken'];
-    return this.authService.refreshAuthTokens(userId, refreshToken);
+  @Post('refresh')
+  async refreshAuthTokens(@Body() refreshTokenDTO: RefreshTokenDTO) {
+    if (!refreshTokenDTO.refreshToken) {
+      throw new HttpException(
+        'invalid authetication data',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return this.authService.refreshAuthTokens(refreshTokenDTO.refreshToken);
   }
 }

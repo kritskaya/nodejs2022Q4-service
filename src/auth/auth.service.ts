@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from '../users/dto/user.dto';
 import { UserService } from '../users/user.service';
 import * as argon2 from 'argon2';
-import { User } from '@prisma/client';
 import { JWTPayload } from './interfaces/jwt.payload.interface';
 
 const secret = process.env.JWT_SECRET_KEY;
@@ -35,7 +34,7 @@ export class AuthService {
       password: passwordHash,
     });
 
-    const tokens = await this.getTokens(newUser);
+    const tokens = await this.getTokens(newUser.id, newUser.login);
     await this.updateUserRefreshToken(newUser.id, tokens.refreshToken);
 
     return tokens;
@@ -61,7 +60,7 @@ export class AuthService {
       );
     }
 
-    const tokens = await this.getTokens(authUserDTO);
+    const tokens = await this.getTokens(user.id, user.login);
     await this.updateUserRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -70,8 +69,9 @@ export class AuthService {
     return argon2.hash(value);
   }
 
-  async getTokens(user: Partial<User>) {
-    const payload: JWTPayload = { sub: user.id, login: user.login };
+  async getTokens(userId: string, login: string) {
+    const payload: JWTPayload = { sub: userId, login: login };
+
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         secret,
@@ -89,7 +89,15 @@ export class AuthService {
     await this.userService.updateToken(id, refreshTokenHash);
   }
 
-  async refreshAuthTokens(userId: string, refreshToken: string) {
+  async refreshAuthTokens(refreshToken: string) {
+    const { sub: userId } = await this.jwtService.verifyAsync(refreshToken, {
+      secret: refreshSecret,
+    });
+
+    if (!userId) {
+      throw new HttpException('invalid token', HttpStatus.BAD_REQUEST);
+    }
+
     const user = await this.userService.findOneById(userId);
     if (!user) {
       throw new HttpException(
@@ -98,14 +106,10 @@ export class AuthService {
       );
     }
 
-    if (!user.refreshToken) {
-      throw new HttpException(
-        'invalid authetication data',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const refreshTokenMatch = await argon2.verify(user.refreshToken, refreshToken);
+    const refreshTokenMatch = await argon2.verify(
+      user.refreshToken,
+      refreshToken,
+    );
 
     if (!refreshTokenMatch) {
       throw new HttpException(
@@ -114,8 +118,9 @@ export class AuthService {
       );
     }
 
-    const tokens = await this.getTokens(user);
+    const tokens = await this.getTokens(user.id, user.login);
     await this.updateUserRefreshToken(user.id, tokens.refreshToken);
+
     return tokens;
   }
 }
