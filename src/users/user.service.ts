@@ -75,7 +75,7 @@ export class UserService {
       },
       data: {
         ...user,
-        refreshToken
+        refreshToken,
       },
     });
 

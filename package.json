@@ -9,6 +9,7 @@
     "docker:scan": "docker scan nodejs2022q2-service_node && docker scan nodejs2022q2-service_postgres",
     "prisma:migrate:start": "prisma migrate dev && npm start",
     "prisma:nodemon": "prisma generate && prisma migrate dev && npm run nodemon",
+    "prisma:start:dev": "prisma generate && prisma migrate dev && npm run start:dev",
     "nodemon": "nodemon --legacy-watch -x ts-node ./src/main.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -19,7 +20,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --config ./test/jest-e2e.json",
-    "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json",
+    "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"

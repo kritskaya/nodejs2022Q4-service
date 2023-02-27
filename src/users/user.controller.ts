@@ -27,7 +27,7 @@ export class UserController {
   @Get()
   async findAll(): Promise<UserResponse[]> {
     const users = await this.userService.findAll();
-    
+
     return users.map((user) => ({
       id: user.id,
       login: user.login,

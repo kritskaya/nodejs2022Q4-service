@@ -1,4 +1,10 @@
-import { Body, Controller, Post, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { UserDTO } from '../users/dto/user.dto';
 import { SignUpResponse } from './interfaces/signup.interface';

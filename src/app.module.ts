@@ -18,7 +18,7 @@ import { LoggingModule } from './log/LoggingModule';
     FavoritesModule,
     PrismaModule,
     AuthModule,
-    LoggingModule
+    LoggingModule,
   ],
 })
 export class AppModule implements NestModule {

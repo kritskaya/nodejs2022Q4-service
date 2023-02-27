@@ -11,7 +11,10 @@ import { LoggingService } from './log/LoggingService';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new HttpExceptionFilter());
+
+  const logger = app.get(LoggingService);
+
+  app.useGlobalFilters(new HttpExceptionFilter(logger));
   app.enableCors();
 
   const file = await readFile(join(cwd(), 'doc', 'api.yaml'), 'utf8');
@@ -23,14 +26,12 @@ async function bootstrap() {
   const PORT = Number(process.env.PORT) || 4000;
   await app.listen(PORT);
 
-  const logger = app.get(LoggingService);
-
   process.on('uncaughtException', (err) => {
     logger.error(`Uncaught Exception thrown: ${err}`);
     exit(1);
   });
 
-  process.on('unhandledRejection', (reason, p) => {
+  process.on('unhandledRejection', (reason) => {
     logger.error(`Unhandled Rejection at Promise with reason: ${reason}`);
   });
 }
