@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { appendFileSync, renameSync, statSync } from 'fs';
 import { join } from 'path';
+import { cwd } from 'process';
 
 type LogMethods = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
 
@@ -46,8 +47,8 @@ export class LoggingService extends Logger {
   }
 
   writeToFile(level: LogMethods, message: string) {
-    const filePath = join(process.env.PWD, 'common-report.log');
-    const errorsFilePath = join(process.env.PWD, 'errors-report.log');
+    const filePath = join(cwd(), 'logs', 'common-report.log');
+    const errorsFilePath = join(cwd(), 'logs', 'errors-report.log');
 
     const maxSize = Number(process.env.MAX_LOG_FILE_SIZE) || 1000;
 

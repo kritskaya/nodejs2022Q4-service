@@ -12,6 +12,7 @@ services:
     volumes:
       - .:/app
       - node-modules:/app/node_modules
+      - ./logs:/app/logs
     networks:
       - home-library
   postgres:
