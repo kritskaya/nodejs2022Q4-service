@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-import { IsUUIDorNull } from '../../validation/decorators/IsUUIDorNull';
+import { IsUUIDorNull } from '../../common/validation/decorators/IsUUIDorNull';
 
 export class CreateAlbumDTO {
   @IsNotEmpty()

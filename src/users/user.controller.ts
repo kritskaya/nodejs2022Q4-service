@@ -11,27 +11,37 @@ import {
   HttpCode,
   ParseUUIDPipe,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dto/user.dto';
+import { UserDTO } from './dto/user.dto';
 import { UpdatePasswordDTO } from './dto/password.dto';
 import { UserResponse } from './types/user-response';
 import { UserService } from './user.service';
-import { User } from 'prisma/prisma-client';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 
+@UseGuards(AccessTokenGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(): Promise<UserResponse[]> {
+    const users = await this.userService.findAll();
+
+    return users.map((user) => ({
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+    }));
   }
 
   @Get(':id')
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<UserResponse> {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
 
     if (!user) {
       throw new HttpException(
@@ -50,9 +60,7 @@ export class UserController {
   }
 
   @Post()
-  async create(
-    @Body(ValidationPipe) dto: CreateUserDTO,
-  ): Promise<UserResponse> {
+  async create(@Body(ValidationPipe) dto: UserDTO): Promise<UserResponse> {
     const newUser = await this.userService.create(dto);
 
     return {
@@ -69,7 +77,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(ValidationPipe) updatePasswordDTO: UpdatePasswordDTO,
   ): Promise<UserResponse> {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',
@@ -101,7 +109,7 @@ export class UserController {
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOneById(id);
     if (!user) {
       throw new HttpException(
         'User with specified id not found',

@@ -8,9 +8,11 @@ import {
   HttpStatus,
   Delete,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from '../albums/album.service';
 import { ArtistService } from '../artists/artist.service';
+import { AccessTokenGuard } from '../common/guards/AccessTokenGuard';
 import { TrackService } from '../tracks/track.service';
 import {
   CreateUpdateFavoriteResponse,
@@ -18,6 +20,7 @@ import {
 } from './dto/FavouritesResponse';
 import { FavouritesService } from './favotites.service';
 
+@UseGuards(AccessTokenGuard)
 @Controller('favs')
 export class FavouritesController {
   constructor(

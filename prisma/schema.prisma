@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  login     String   @unique
-  password  String
-  version   Int      @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  login        String
+  password     String
+  refreshToken String?
+  version      Int      @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("users")
 }
@@ -34,24 +35,24 @@ model Album {
 }
 
 model Artist {
-  id     String  @id @default(uuid())
-  name   String
-  grammy Boolean @default(false)
-  albums Album[]
-  tracks Track[]
+  id        String           @id @default(uuid())
+  name      String
+  grammy    Boolean          @default(false)
+  albums    Album[]
+  tracks    Track[]
   favourite FavouriteArtist?
 
   @@map("artists")
 }
 
 model Track {
-  id       String  @id @default(uuid())
-  name     String
-  artistId String?
-  artist   Artist? @relation(fields: [artistId], references: [id])
-  albumId  String?
-  album    Album?  @relation(fields: [albumId], references: [id])
-  duration Int
+  id        String          @id @default(uuid())
+  name      String
+  artistId  String?
+  artist    Artist?         @relation(fields: [artistId], references: [id])
+  albumId   String?
+  album     Album?          @relation(fields: [albumId], references: [id])
+  duration  Int
   favourite FavouriteTrack?
 
   @@map("tracks")
@@ -60,7 +61,7 @@ model Track {
 model FavouriteAlbum {
   id      Int    @id @default(autoincrement())
   albumId String @unique
-  album   Album @relation(fields: [albumId], references: [id])
+  album   Album  @relation(fields: [albumId], references: [id])
 
   @@map("fav_albums")
 }
@@ -76,7 +77,7 @@ model FavouriteArtist {
 model FavouriteTrack {
   id      Int    @id @default(autoincrement())
   trackId String @unique
-  track   Track @relation(fields: [trackId], references: [id])
+  track   Track  @relation(fields: [trackId], references: [id])
 
   @@map("fav_tracks")
 }
