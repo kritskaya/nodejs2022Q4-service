@@ -86,7 +86,7 @@ export class AuthService {
 
   async updateUserRefreshToken(id: string, refreshToken: string) {
     const refreshTokenHash = await this.getHash(refreshToken);
-    await this.userService.updateToken(id, refreshToken);
+    await this.userService.updateToken(id, refreshTokenHash);
   }
 
   async refreshAuthTokens(userId: string, refreshToken: string) {
@@ -105,7 +105,9 @@ export class AuthService {
       );
     }
 
-    if (user.refreshToken !== refreshToken) {
+    const refreshTokenMatch = await argon2.verify(user.refreshToken, refreshToken);
+
+    if (!refreshTokenMatch) {
       throw new HttpException(
         'invalid or expired token',
         HttpStatus.BAD_REQUEST,
@@ -113,7 +115,7 @@ export class AuthService {
     }
 
     const tokens = await this.getTokens(user);
-    await this.updateUserRefreshToken(user.id, refreshToken);
+    await this.updateUserRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 }
