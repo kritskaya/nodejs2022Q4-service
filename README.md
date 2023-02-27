@@ -33,33 +33,11 @@ Run the command:
 docker compose up
 ```
 
-After starting the app on port (4000 as default) you can open Postman or you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
-## Scanning
-
-For vulnerabilities scanning use the command:
-
-```
-npm run docker:scan
-```
+After starting the app on port (4000 as default) you can open Postman 
 
 ## Testing
 
 After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
 
 To run all test with authorization
 
@@ -71,6 +49,14 @@ To run only specific test suite with authorization
 
 ```
 npm run test:auth -- <path to suite>
+```
+
+## Scanning
+
+For vulnerabilities scanning use the command:
+
+```
+npm run docker:scan
 ```
 
 ### Auto-fix and format
